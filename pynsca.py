@@ -43,8 +43,6 @@ class NSCANotifier(object):
     This *only* supports XOR encryption right now.
     """
 
-    class TimeoutError(Exception): pass
-
     # utilities for below
     proto_version = 3
     fromserver_fmt = "!128sL"
@@ -101,7 +99,7 @@ class NSCANotifier(object):
         @param plugin_output: textual output
         """
         sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sk.connect((self.monitoring_host, self.monitoring_port))
+        sk.connect((self.monitoring_server, self.monitoring_port))
 
         # read packet
         buf = ''
