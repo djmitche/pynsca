@@ -1,0 +1,5 @@
+_trial_temp/
+pynsca.egg-info/
+pynsca.pyc
+sandbox/
+test_pynsca.pyc
