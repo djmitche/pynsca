@@ -146,7 +146,7 @@ class TestPacketMethods(unittest.TestCase):
 
         self.assertEqual((got_iv, got_timestamp), (exp_iv, 0x4db9b0b1))
 
-    def test_encode_server_to_server(self):
+    def test_encode_service_to_server(self):
         iv = base64.b64decode("""
         7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
         WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
