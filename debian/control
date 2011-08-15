@@ -1,0 +1,16 @@
+Source: python-nsca
+Section: python
+Priority: extra
+Maintainer: Aaron Brady <bradya@gmail.com>
+Build-Depends: cdbs (>= 0.4.49), debhelper (>= 7),
+ python-all-dev, python-support, python-setuptools
+Standards-Version: 3.8.3
+Homepage: https://github.com/djmitche/pynsca
+
+Package: python-nsca
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: python-mcrypt
+Description: Nagios/Icinga protocol support for Python
+ This package provides a module for to send passive host and service checks
+ from Python to an nsca daemon on a remote Nagios or Icinga host.
