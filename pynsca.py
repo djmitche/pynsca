@@ -86,6 +86,18 @@ class NSCANotifier(object):
 
         return toserver_pkt
 
+    def host_result(self, host_name, return_code, plugin_output):
+        """
+        Send a passive host check to the configured monitoring host
+
+        Host checks are just service checks with no service listed.
+
+        @param host_name: host containing the service
+        @param return_code: result (e.g., C{OK} or C{CRITICAL})
+        @param plugin_output: textual output
+        """
+        self.svc_result(self, host_name, '', return_code, plugin_output)
+
     def svc_result(self, host_name, svc_description, return_code, plugin_output):
         """
         Send a service result to the configured monitoring host

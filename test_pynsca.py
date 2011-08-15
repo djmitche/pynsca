@@ -146,7 +146,7 @@ class TestPacketMethods(unittest.TestCase):
 
         self.assertEqual((got_iv, got_timestamp), (exp_iv, 0x4db9b0b1))
 
-    def test_encode_to_server(self):
+    def test_encode_server_to_server(self):
         iv = base64.b64decode("""
         7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
         WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
@@ -175,3 +175,35 @@ class TestPacketMethods(unittest.TestCase):
         self.assertEqual(
                 [ ord(b) for b in exp_pkt ],
                 [ ord(b) for b in pkt ])
+
+    def test_encode_host_to_server(self):
+        iv = base64.b64decode("""
+        7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
+        WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
+        127zX6Moyr83tHGpXms+O3qHPCckH6c4Y=""")
+        timestamp = 1304029911
+
+        exp_pkt = base64.b64decode("""
+        7ersPMnky/k6xcuIruKhUVhGknTVn79qYGhYjz84WZ6HDVTfVjADzawkLVoH+pM+LX6X6WUqA3Ez
+        MVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB127zX6Moyr83tH
+        GpXms+O3qHPCckH6c4bt6ew8yfL3R3d8IV+u4s04NjPqWbznkhkMCS7qDgh3/PJkOLtWMAPNrCQt
+        Wgf6kz4tfpfpZSoDcTMxXEI61D4sOHbojqfrXFQQia8Yg0I/1K2D9AcZn5hN0PWPCsnONwFFIJDs
+        DOxAHXbvNfoyjKvze0caleaz47eoc8JyQfpzhu3p7DzJ8vdHd3whX67izTg2M+pZvOeSGQwJLuoO
+        CHf88mQ4u1YwA82sJC1aB/qTPi1+l+llKgNxMzFcQjrUPiw4duiOp+tcVBCJrxiDQlexwe+bJhmf
+        mE3Q9Y8Kyc43AUUgkOwM7EAddu81+jKMq/N7RxqV5rPjt6hzwnJB+nOG7ensPMny90d3fCFfruLN
+        ODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6WUqA3EzMVxCOtQ+LDh26I6n61xU
+        EImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB127zX6Moyr83tHGpXms+O3qHPCckH6c4bt
+        6ew8yfL3R3d8IV+u4s04NjPqWbznkhkMCS7qDgh3/PJkOLtWMAPNrCQtWgf6kz4tfpfpZSoDcTMx
+        XEI61D4sOHbojqfrXFQQia8Yg0JXscHvmyYZn5hN0PWPCsnONwFFIJDsDOxAHXbvNfoyjKvze0ca
+        leaz47eoc8JyQfpzhu3p7DzJ8vdHd3whX67izTg2M+pZvOeSGQwJLuoOCHf88mQ4u1YwA82sJC1a
+        B/qTPi1+l+llKgNxMzFcQjrUPiw4duiOp+tcVBCJrxiDQlex
+        """)
+
+        pkt = self.notif._encode_to_server(iv, timestamp, 0,
+                'linux-ix-slave10.build', '', 'hello!')
+        self.assertEqual(
+                [ ord(b) for b in exp_pkt ],
+                [ ord(b) for b in pkt ])
+
+if __name__ == '__main__':
+    unittest.main()
