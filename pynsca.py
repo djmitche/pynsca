@@ -39,8 +39,6 @@ UNKNOWN = 3
 class NSCANotifier(object):
     """
     Class to send notifications to a Nagios server via NSCA. 
-
-    This *only* supports XOR encryption right now.
     """
 
     # utilities for below
@@ -50,24 +48,35 @@ class NSCANotifier(object):
     toserver_fmt = "!HxxlLH64s128s514s"
     toserver_fmt_size = struct.calcsize(toserver_fmt)
 
-    def __init__(self, monitoring_server, monitoring_port=5667):
+    def __init__(self, monitoring_server, monitoring_port=5667, encryption_mode=1, password=None):
         self.monitoring_server = monitoring_server
         self.monitoring_port = monitoring_port
+        self.encryption_mode = encryption_mode
+        self.password = password
 
     def _decode_from_server(self, bytes):
         iv, timestamp = struct.unpack(self.fromserver_fmt, bytes)
         return iv, timestamp
 
-    def _encrypt_packet(self, toserver_pkt, iv, mode='XOR', password=None):
-        if mode == 'XOR':
+    def _encrypt_packet(self, toserver_pkt, iv, mode, password):
+        if mode == 1:
             toserver_pkt = ''.join([chr(p^i)
                             for p,i in itertools.izip(
                                     itertools.imap(ord, toserver_pkt),
                                     itertools.imap(ord, itertools.cycle(iv)))])
+        elif mode == 16:
+            import mcrypt
+            m = mcrypt.MCRYPT('rijndael-256', 'cfb')
+            iv_size = m.get_iv_size()
+            key_size = m.get_key_size()
+            key = ['\0'] * key_size
+            key[0:len(password)] = password
+            m.init(''.join(key), iv[:iv_size])
+            toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
         return toserver_pkt
 
     def _encode_to_server(self, iv, timestamp, return_code, host_name,
-                         svc_description, plugin_output):
+                         svc_description, plugin_output, mode=1, password=None):
         # note that this will pad the strings with 0's instead of random digits.  Oh well.
         toserver = [
                 self.proto_version,
@@ -86,8 +95,8 @@ class NSCANotifier(object):
         # convert to bytes
         toserver_pkt = struct.pack(self.toserver_fmt, *toserver)
 
-        # and XOR with the IV
-        toserver_pkt = self._encrypt_packet(toserver_pkt, iv)
+        # and encode or encrypt
+        toserver_pkt = self._encrypt_packet(toserver_pkt, iv, mode, password)
 
         return toserver_pkt
 
@@ -129,7 +138,8 @@ class NSCANotifier(object):
         # make up reply
         iv, timestamp = self._decode_from_server(buf)
         toserver_pkt = self._encode_to_server(iv, timestamp, return_code,
-                host_name, svc_description, plugin_output)
+                host_name, svc_description, plugin_output,
+                self.encryption_mode, self.password)
 
         # and send it
         sk.send(toserver_pkt)

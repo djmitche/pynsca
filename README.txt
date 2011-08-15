@@ -9,4 +9,5 @@ NSCA.
 == Requirements ==
 
  * Python 2.4 or higher
+ * python-mcrypt, if using AES encryption
  * No other libraries required

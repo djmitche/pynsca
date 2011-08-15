@@ -205,5 +205,35 @@ class TestPacketMethods(unittest.TestCase):
                 [ ord(b) for b in exp_pkt ],
                 [ ord(b) for b in pkt ])
 
+    def test_encode_service_to_server_aes256(self):
+        iv = base64.b64decode("""
+        7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
+        WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
+        127zX6Moyr83tHGpXms+O3qHPCckH6c4Y=""")
+        timestamp = 1304029911
+
+        exp_pkt = base64.b64decode("""
+        w0EnKnd4gHVklNEYZFDS1u/mnDk2jtpz1sCfQjFfc/e/17ngOzEOgiasHLMCLm5eJ36BowwVSZGP
+        yZk1amnUljA+ZMXrfOo2rhEB8wN7x3+M91br71Zw3GSEvBCvjQBofJ2SUwBNMG6g64E1lVwe5yoH
+        LhOwMmXqQ82mSEcWTMbMY3H0+UaqLoglCW9gRXjMauKTfpRcbPLqKcIuCBmPFgV3PrkrZ/pIu3qY
+        hrwY5u5Eg0xFBXy8iiwL3I9Kc9uewJHWHA4SAL01eg+e36Y1yT+fZMA7WX/HSMYv0o/+do8JoSvm
+        Mf4TiGxHBqdDMKMOLSlUeaisO6fA9krtJ1RRDpyy8xJ1ZnToRwMIt6cNtEjuZNMUewr79ZH17D3N
+        BhEpFzbN/B50JrAyp8GG4+EcG9DU6uEX8BohMV6PTG59HW/Hr8PXTcVAH4VNCr+UED8BHdg39niL
+        +ehQbOSqyTpLuhtSx53KZHSk8Se5cQQJciy6Ioizx3UH2sHfMxJcYX24BjB728SmF9Oj3EUZjsLW
+        q7QnEvUTjkBGXqKvtgBRNHE3ZLGZxpkbf1eX6WKMmU+Xu3mRmbkGiRe/xefEUTIDOVTD1WBrtTqP
+        McE9DQp+rTBeGHZGfa0RuCb1f+1TKD5/v6OcplStx0Sp3T39RkP7yzy2hItq5Newyi05mQf27Va5
+        E7NTMMSKRYqTtqTH/hproDI8n1hMMcAAWLxfN750ACCAl13lMxmGaobtyvYDMhj6DVSn9fkHxP86
+        7aw6NLUgMyq7w5xo6BfcAdvu4o1N7hkDNkq96iELZRQ7D8Xyb2cfCRRnrwNpIImgepgKSPRoyOed
+        c1qoqbwFNGwPlokd3ecOaB2eeLx2s9DtLNdG0RB0GbGuS7SbD17egmvOa9DXDgeYw9humZE2kJNy
+        OSL4Q5gJVSqB9CTjHMduaozrMQE0MS6gUj8k0OC7knpCHNhG
+        """)
+
+        pkt = self.notif._encode_to_server(iv, timestamp, 0,
+                'linux-ix-slave10.build', 'buildbot-start', 'hello!',
+                16, '1234')
+        self.assertEqual(
+                [ ord(b) for b in exp_pkt ],
+                [ ord(b) for b in pkt ])
+
 if __name__ == '__main__':
     unittest.main()
