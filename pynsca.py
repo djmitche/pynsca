@@ -58,6 +58,14 @@ class NSCANotifier(object):
         iv, timestamp = struct.unpack(self.fromserver_fmt, bytes)
         return iv, timestamp
 
+    def _encrypt_packet(self, toserver_pkt, iv, mode='XOR', password=None):
+        if mode == 'XOR':
+            toserver_pkt = ''.join([chr(p^i)
+                            for p,i in itertools.izip(
+                                    itertools.imap(ord, toserver_pkt),
+                                    itertools.imap(ord, itertools.cycle(iv)))])
+        return toserver_pkt
+
     def _encode_to_server(self, iv, timestamp, return_code, host_name,
                          svc_description, plugin_output):
         # note that this will pad the strings with 0's instead of random digits.  Oh well.
@@ -79,10 +87,7 @@ class NSCANotifier(object):
         toserver_pkt = struct.pack(self.toserver_fmt, *toserver)
 
         # and XOR with the IV
-        toserver_pkt = ''.join([chr(p^i)
-                        for p,i in itertools.izip(
-                                itertools.imap(ord, toserver_pkt),
-                                itertools.imap(ord, itertools.cycle(iv)))])
+        toserver_pkt = self._encrypt_packet(toserver_pkt, iv)
 
         return toserver_pkt
 
@@ -96,7 +101,7 @@ class NSCANotifier(object):
         @param return_code: result (e.g., C{OK} or C{CRITICAL})
         @param plugin_output: textual output
         """
-        self.svc_result(self, host_name, '', return_code, plugin_output)
+        self.svc_result(host_name, '', return_code, plugin_output)
 
     def svc_result(self, host_name, svc_description, return_code, plugin_output):
         """
