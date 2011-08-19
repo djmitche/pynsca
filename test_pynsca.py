@@ -30,6 +30,10 @@ import socket
 import unittest
 import base64
 import pynsca
+try:
+    import mcrypt
+except ImportError:
+    mcrypt = None
 
 class TestConstants(unittest.TestCase):
 
@@ -206,6 +210,8 @@ class TestPacketMethods(unittest.TestCase):
                 [ ord(b) for b in pkt ])
 
     def test_encode_service_to_server_aes256(self):
+        if not mcrypt:
+            raise unittest.SkipTest("python-mcrypt not installed")
         iv = base64.b64decode("""
         7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
         WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
