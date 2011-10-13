@@ -126,6 +126,32 @@ class TestNetwork(unittest.TestCase):
             oYflBVn15VTiMcGsI0P1Bb2AbPpna2hE+6OIJAk566qB0LAbxpWw6IeylOr2SfB
         """)
 
+    def test_xor_with_password(self):
+        self.setServerBannerB64("""
+            unvxWHaOSEOA67AxsyjFCCOJ5i2d8pz5uHVA7A2ilccehh+UFWfXlVOIxwawjQ/UFvYBs
+            +mdraET7o4gkCTnrqoHQsBvGlbDoh7KU6vZJ8HQKHW5xiJb2RDq+aAO4U+56ZJ5WKzQHE
+            /u5qKZwMpbkPPQSrnzpZMDj42knW7zVlhNubCx
+        """)
+
+        notif = pynsca.NSCANotifier('127.0.0.1', self.port, password='ham')
+        notif.svc_result('linux-ix-slave10.build', 'buildbot-start', 0, 'hello!')
+
+        self.assertGotB64("""
+            0hmcMK4acQugOmHt20nECSyR9mGZ4tDnvHVb4V3/08QGhxKdfQa6/TLlr2fd5W65fpds24jwxcB+
+            hu9N+EWKxstqKqECcjeuyn+nO8q0LdXULHC2wTcbwgXm47VjiS7UgfMUMM29dC6DjsP0qKs2+JK9
+            ItiezfJu5+zJ9Q+ePjnXE5A1Hu8lK+GG2FDeQKRlS+iLRfyf9JjVHSGBZcP4r3/rd/V4D7b4O+mq
+            btHgZ7V7nmDegfzAyXKD5kH9TIbDwmYvqA53PqLPdqs+w7gizN0pcvmrSjq0eIuUyG+MJ9iE+hg1
+            xLFxJ4+Lyvitojr9m7En0ZLI+2Li5cXwBpI7MNsWmTkb5iku6IrdWdJFrWlO4YdA9ZPxkdkYKI1g
+            yvSqdudy/HQKv/Q+4KZr2OxivHebadKE9czMe4/jSPFJj8/HbyOtB3s7q8NzojLGsUasuEkY0adP
+            M7h9gpjNZoAi0Yj/ETnBuH0ihofP8aGnM/GeuCvUm8T+a+7gzPwDmzc10hqcMBfjICLtg9Fc20mo
+            YELkjkzwmv2U0BQthGzP/aZz7n75fQa6/TLlr2fd5W65fpds24jwxcB+hu9N+EWKxstqKqECcjeu
+            yn+nO8q0T6C9QBTUrkM2sXGHkcFjiS7UgfMUMM29dC6DjsP0qKs2+JK9ItiezfJu5+zJ9Q+ePjnX
+            E5A1Hu8lK+GG2FDeQKRlS+iLRfyf9JjVHSGBZcP4r3/rd/V4D7b4O+mqbtHgZ7V7nmDegfzAyXKD
+            5kH9TIbDwmYvqA53PqLPdqs+w7hKqbFFHdirSjq0eIuUyG+MJ9iE+hg1xLFxJ4+Lyvitojr9m7En
+            0ZLI+2Li5cXwBpI7MNsWmTkb5iku6IrdWdJFrWlO4YdA9ZPxkdkYKI1gyvSqdudy/HQKv/Q+4KZr
+            2OxivHebadKE9czMe4/jSPFJj8/HbyOtB3s7q8NzojLGsUas
+        """)
+
 class TestPacketMethods(unittest.TestCase):
 
     def setUp(self):
