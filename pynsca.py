@@ -60,10 +60,14 @@ class NSCANotifier(object):
 
     def _encrypt_packet(self, toserver_pkt, iv, mode, password):
         if mode == 1:
-            toserver_pkt = ''.join([chr(p^i)
-                            for p,i in itertools.izip(
-                                    itertools.imap(ord, toserver_pkt),
-                                    itertools.imap(ord, itertools.cycle(iv)))])
+            cycle = [iv]
+            if password:
+                cycle = [iv, password]
+            for key in cycle:
+                toserver_pkt = ''.join([chr(p^i)
+                                for p,i in itertools.izip(
+                                        itertools.imap(ord, toserver_pkt),
+                                        itertools.imap(ord, itertools.cycle(key)))])
         elif mode == 16:
             import mcrypt
             m = mcrypt.MCRYPT('rijndael-256', 'cfb')
