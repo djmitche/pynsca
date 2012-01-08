@@ -3,3 +3,4 @@ pynsca.egg-info/
 pynsca.pyc
 sandbox/
 test_pynsca.pyc
+dist
