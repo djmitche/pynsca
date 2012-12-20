@@ -116,7 +116,7 @@ class NSCANotifier(object):
         """
         self.svc_result(host_name, '', return_code, plugin_output)
 
-    def svc_result(self, host_name, svc_description, return_code, plugin_output):
+    def svc_result(self, host_name, svc_description, return_code, plugin_output, timeout=5):
         """
         Send a service result to the configured monitoring host
 
@@ -129,6 +129,7 @@ class NSCANotifier(object):
         @param plugin_output: textual output
         """
         sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sk.settimeout(timeout)
         sk.connect((self.monitoring_server, self.monitoring_port))
 
         # read packet
