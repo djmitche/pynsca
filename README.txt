@@ -21,3 +21,12 @@ Issues
 
 Please file any bugs or feature requests at
   https://github.com/djmitche/pynsca/issues
+
+Changes
+=======
+
+1.4
+---
+
+The library now supports 3DES encryption (mode 3).  This adds the requirement
+for PyCrypto.
