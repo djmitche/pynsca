@@ -56,12 +56,6 @@ class NSCANotifier(object):
         self.monitoring_port = monitoring_port
         self.encryption_mode = encryption_mode
         self.password = password
-        print "monitoring_server: "+str(monitoring_server)
-        print "monitoring_port: "+str(monitoring_port)
-        print "encryption_mode: "+str(encryption_mode)
-        print "password: "+str(password)
-
-
 
     def _decode_from_server(self, bytes):
         iv, timestamp = struct.unpack(self.fromserver_fmt, bytes)
