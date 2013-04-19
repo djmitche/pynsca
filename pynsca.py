@@ -26,6 +26,9 @@
 # this file under either the MPL or the GPLv2 License.
 
 import struct, binascii, itertools, socket
+import Crypto.Cipher.DES3
+import Crypto.Util.randpool
+
 
 # return value constants
 OK = 0
@@ -77,6 +80,18 @@ class NSCANotifier(object):
             key[0:len(password)] = password
             m.init(''.join(key), iv[:iv_size])
             toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
+        elif mode == 3:
+            password += '\0' * (24 - len(password))
+            iv_size = 8
+            if len(iv) >= Crypto.Cipher.DES3.block_size:
+                iv = iv[:iv_size]
+            else:
+                iv += self.random_pool.get_bytes(iv_size - iv)
+            myDes = Crypto.Cipher.DES3.new(password, Crypto.Cipher.DES3.MODE_CFB,iv)
+            toserver_pkt = ''.join(myDes.encrypt(toserver_pkt))
+            #print "toserver_pkt: "+toserver_pkt
+        else:
+            print "no supported encryption_mode"
         return toserver_pkt
 
     def _encode_to_server(self, iv, timestamp, return_code, host_name,
