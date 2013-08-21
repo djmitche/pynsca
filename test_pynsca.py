@@ -1,14 +1,16 @@
 #!/usr/bin/env python
+#coding: utf-8
+
 # The contents of this file are subject to the Mozilla Public License
 # Version 1.1 (the "License"); you may not use this file except in
 # compliance with the License. You may obtain a copy of the License at
 # http://www.mozilla.org/MPL/
-# 
+#
 # Software distributed under the License is distributed on an "AS IS"
 # basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 # License for the specific language governing rights and limitations
 # under the License.
-# 
+#
 # The Original Code is pynsca.
 #
 # The Initial Developer of the Original Code is Dustin J. Mitchell.  Portions
@@ -266,6 +268,52 @@ class TestPacketMethods(unittest.TestCase):
         self.assertEqual(
                 [ ord(b) for b in exp_pkt ],
                 [ ord(b) for b in pkt ])
+
+    def test_encode_service_to_server_supports_unicode_strings(self):
+        iv = base64.b64decode("""
+        7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7VjADzawkLVoH+pM+LX6X6
+        WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTdD1jwrJzjcBRSCQ7AzsQB
+        127zX6Moyr83tHGpXms+O3qHPCckH6c4Y=""")
+        timestamp = 1304029911
+
+        exp_pkt = base64.b64decode("""
+        7ersPEYumdI6xcuIruKhUVhGknTVn79qYGhYjz84WZ6HDVTfVjADzawkLVoH+pM+LX6X6W
+        UqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCNcSog/9Eduu1PqSU/X7JzjcBRSCQ7AzsQB12
+        7zX6Moyr83tHGpXms+O3qHPCckH6c4bt6ew8yfL3R3d8IV+u4s04NjPqWbznkhkMCS7qDg
+        h3/PJkOLtWMAPNrCQtWgf6kz4tfpfpZSoDcTMxXEI61D4sOHbojqfrXFQQia8Yg0Ij1LKb
+        /hw5XDGOdzYsyWPONwFFIJDsDOxAHXbvNfoyjKvze0caleaz47eoc8JyQfpzhu3p7DzJ8v
+        dHd3whX67izTg2M+pZvOeSGQwJLuoOCHf88mQ4u1YwA82sJC1aB/qTPi1+l+llKgNxMzFc
+        QjrUPiw4duiOp+tcVBCJrxiDQlexwe+bJhmfmE3Q9Y8Kyc43AUUgkOwM7EAddu81+jKMq/
+        N7RxqV5rPjt6hzwnJB+nOG7ensPMny90d3fCFfruLNODYz6lm855IZDAku6g4Id/zyZDi7
+        VjADzawkLVoH+pM+LX6X6WUqA3EzMVxCOtQ+LDh26I6n61xUEImvGINCV7HB75smGZ+YTd
+        D1jwrJzjcBRSCQ7AzsQB127zX6Moyr83tHGpXms+O3qHPCckH6c4bt6ew8yfL3R3d8IV+u
+        4s04NjPqWbznkhkMCS7qDgh3/PJkOLtWMAPNrCQtWgf6kz4tfpfpZSoDcTMxXEI61D4sOH
+        bojqfrXFQQia8Yg0JXscHvmyYZn5hN0PWPCsnONwFFIJDsDOxAHXbvNfoyjKvze0caleaz
+        47eoc8JyQfpzhu3p7DzJ8vdHd3whX67izTg2M+pZvOeSGQwJLuoOCHf88mQ4u1YwA82sJC
+        1aB/qTPi1+l+llKgNxMzFcQjrUPiw4duiOp+tcVBCJrxiDQlex
+        """)
+
+        pkt = self.notif._encode_to_server(iv,
+                                           timestamp,
+                                           0,
+                                           u'linux-ix-slave10.build',
+                                           u'buildbot-start',
+                                           u'teste: éçãê')
+        self.assertEqual(
+            [ord(b) for b in exp_pkt],
+            [ord(b) for b in pkt])
+
+    def test_force_str_converts_unicode_strings(self):
+        result = self.notif._force_str(u'açafrão')
+
+        self.assertEqual(str, type(result))
+
+    def test_force_str_keeps_str_strings_untouched(self):
+        result = self.notif._force_str('hello')
+
+        self.assertEqual(str, type(result))
+
+
 
 if __name__ == '__main__':
     unittest.main()
