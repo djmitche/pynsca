@@ -3,12 +3,12 @@
 # Version 1.1 (the "License"); you may not use this file except in
 # compliance with the License. You may obtain a copy of the License at
 # http://www.mozilla.org/MPL/
-# 
+#
 # Software distributed under the License is distributed on an "AS IS"
 # basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 # License for the specific language governing rights and limitations
 # under the License.
-# 
+#
 # The Original Code is pynsca.
 #
 # The Initial Developer of the Original Code is Dustin J. Mitchell.  Portions
@@ -41,7 +41,7 @@ UNKNOWN = 3
 
 class NSCANotifier(object):
     """
-    Class to send notifications to a Nagios server via NSCA. 
+    Class to send notifications to a Nagios server via NSCA.
     """
 
     # utilities for below
@@ -102,9 +102,9 @@ class NSCANotifier(object):
                 0, # crc32_value
                 timestamp,
                 return_code,
-                host_name,
-                svc_description,
-                plugin_output,
+                self._force_str(host_name),
+                self._force_str(svc_description),
+                self._force_str(plugin_output),
         ]
 
         # calculate crc32 and insert into the list
@@ -118,6 +118,11 @@ class NSCANotifier(object):
         toserver_pkt = self._encrypt_packet(toserver_pkt, iv, mode, password)
 
         return toserver_pkt
+
+    def _force_str(self, text):
+        if isinstance(text, unicode):
+            return text.encode('utf-8')
+        return text
 
     def host_result(self, host_name, return_code, plugin_output):
         """
