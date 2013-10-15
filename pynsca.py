@@ -90,6 +90,8 @@ class NSCANotifier(object):
             myDes = Crypto.Cipher.DES3.new(password, Crypto.Cipher.DES3.MODE_CFB,iv)
             toserver_pkt = ''.join(myDes.encrypt(toserver_pkt))
             #print "toserver_pkt: "+toserver_pkt
+        elif mode == 0:
+            return toserver_pkt
         else:
             print "no supported encryption_mode"
         return toserver_pkt
