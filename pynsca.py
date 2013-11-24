@@ -26,8 +26,6 @@
 # this file under either the MPL or the GPLv2 License.
 
 import struct, binascii, itertools, socket
-import Crypto.Cipher.DES3
-import Crypto.Util.randpool
 
 
 # return value constants
@@ -81,6 +79,9 @@ class NSCANotifier(object):
             m.init(''.join(key), iv[:iv_size])
             toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
         elif mode == 3:
+            import Crypto.Cipher.DES3
+            import Crypto.Util.randpool
+
             password += '\0' * (24 - len(password))
             iv_size = 8
             if len(iv) >= Crypto.Cipher.DES3.block_size:
