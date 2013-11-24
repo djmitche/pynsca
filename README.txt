@@ -13,7 +13,7 @@ Requirements
 
 * Python 2.4 or higher
 * python-mcrypt, if using AES encryption
-* pycrypto for 3DES 
+* pycrypto, if using 3DES encryption
 * No other libraries required
 
 Issues
@@ -24,6 +24,11 @@ Please file any bugs or feature requests at
 
 Changes
 =======
+
+1.5
+---
+
+PyCrypto is only required when using 3DES encryption (mode 3).
 
 1.4
 ---
