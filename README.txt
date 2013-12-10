@@ -4,6 +4,7 @@ NSCA.
 Usage
 =====
 
+ >>> import pynsca
  >>> from pynsca import NSCANotifier
  >>> notif = NSCANotifier("nagios")
  >>> notif.svc_result("host", "service", pynsca.OK, "Looks Good!")
