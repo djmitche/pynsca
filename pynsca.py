@@ -170,4 +170,5 @@ class NSCANotifier(object):
                 self.encryption_mode, self.password)
 
         # and send it
-        sk.send(toserver_pkt)
+        sk.sendall(toserver_pkt)
+        sk.close()
