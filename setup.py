@@ -28,7 +28,7 @@
 import os
 from setuptools import setup, find_packages
 
-descr = open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
+descr = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name='pynsca',
