@@ -26,6 +26,11 @@ Please file any bugs or feature requests at
 Changes
 =======
 
+1.6 (Unreleased)
+----------------
+
+Work in progress
+
 1.5
 ---
 

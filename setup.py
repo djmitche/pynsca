@@ -32,7 +32,7 @@ descr = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name='pynsca',
-    version='1.5',
+    version='1.6a',
     description='Simple Python interface to Nagios Service Check Architecture',
     long_description=descr,
     author='Dustin J. Mitchell',
