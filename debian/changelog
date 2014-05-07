@@ -4,7 +4,7 @@ python-nsca (1.6) wheezy; urgency=low
 
  -- Ludovic Gasc <gmludo@gmail.com>  Wed, 7 May 2014 22:54:01 +0200
 
- python-nsca (0.1) lucid; urgency=low
+python-nsca (0.1) lucid; urgency=low
 
   * Initial release.
 
