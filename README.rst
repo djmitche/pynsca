@@ -29,7 +29,7 @@ Changes
 1.6 (Unreleased)
 ----------------
 
-Work in progress
+* Debian package updated.
 
 1.5
 ---
