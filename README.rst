@@ -30,6 +30,7 @@ Changes
 ----------------
 
 * Debian package updated.
+* spec file to generate a RPM package.
 
 1.5
 ---
