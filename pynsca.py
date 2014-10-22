@@ -107,7 +107,7 @@ class NSCANotifier(object):
                 return_code,
                 self._force_str(host_name),
                 self._force_str(svc_description),
-                self._force_str(plugin_output),
+                self._force_str(self._escape_newlines(plugin_output)),
         ]
 
         # calculate crc32 and insert into the list
@@ -121,6 +121,10 @@ class NSCANotifier(object):
         toserver_pkt = self._encrypt_packet(toserver_pkt, iv, mode, password)
 
         return toserver_pkt
+
+    def _escape_newlines(self, text):
+        """Escape backslash and newlines; see https://github.com/djmitche/pynsca/issues/12#issuecomment-60086643"""
+        return text.replace('\\', r'\\').replace('\n', r'\n')
 
     def _force_str(self, text):
         if isinstance(text, unicode):
