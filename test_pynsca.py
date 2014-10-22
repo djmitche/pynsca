@@ -313,6 +313,11 @@ class TestPacketMethods(unittest.TestCase):
 
         self.assertEqual(str, type(result))
 
+    def test_escape_newlines(self):
+        self.assertEqual(
+                self.notif._escape_newlines('abc\a\t\n\\'),
+                'abc\a\t\\n\\\\')
+
 
 
 if __name__ == '__main__':
