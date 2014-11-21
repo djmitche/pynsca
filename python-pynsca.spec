@@ -46,5 +46,5 @@ rm -rf %{buildroot}
 
 %changelog
 
-* Wed Feb 20 2014 Xavier Devlamynck <xd@eyepea.eu> - 1.5-1
+* Thu Feb 20 2014 Xavier Devlamynck <xd@eyepea.eu> - 1.5-1
 - Initial release
