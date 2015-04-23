@@ -9,14 +9,14 @@ Usage
  >>> notif = NSCANotifier("nagios")
  >>> notif.svc_result("host", "service", pynsca.OK, "Looks Good!")
  
- Prebuild RPM packages
- =====================
+Prebuild RPM packages
+=====================
  
- The Bareos project builds (using open build server) and publishes python-pynsca RPM packages for a 
- variety of RPM based Linux distribution, you can directly install from the repository:
- http://download.bareos.org/bareos/contrib/
- 
- Debian / Ubuntu packages may follow later.
+The Bareos project builds (using open build server) and publishes python-pynsca RPM packages for a 
+variety of RPM based Linux distribution, you can directly install from the repository:
+http://download.bareos.org/bareos/contrib/
+
+Debian / Ubuntu packages may follow later.
 
 Requirements
 ============
