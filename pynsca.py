@@ -59,6 +59,22 @@ class NSCANotifier(object):
         iv, timestamp = struct.unpack(self.fromserver_fmt, bytes)
         return iv, timestamp
 
+    def _pad_password(self, password, length):
+        return password + ('\0' * (length - len(password)))
+
+    def _apply_cipher(self, cipher, iv, password, toserver_pkt):
+        import Crypto.Util.randpool
+
+        max_key_size = cipher.key_size[-1]
+        password = self._pad_password(password, max_key_size)
+        iv_size = cipher.block_size
+        if len(iv) >= iv_size:
+            iv = iv[:iv_size]
+        else:
+            iv += self.random_pool.get_bytes(iv_size - iv)
+        e = cipher.new(password, cipher.MODE_CFB, iv)
+        return ''.join(e.encrypt(toserver_pkt))
+
     def _encrypt_packet(self, toserver_pkt, iv, mode, password):
         if mode == 1:
             cycle = [iv]
@@ -79,32 +95,12 @@ class NSCANotifier(object):
             m.init(''.join(key), iv[:iv_size])
             toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
         elif mode == 3:
-            import Crypto.Cipher.DES3
-            import Crypto.Util.randpool
-
-            password += '\0' * (24 - len(password))
-            iv_size = 8
-            if len(iv) >= Crypto.Cipher.DES3.block_size:
-                iv = iv[:iv_size]
-            else:
-                iv += self.random_pool.get_bytes(iv_size - iv)
-            myDes = Crypto.Cipher.DES3.new(password, Crypto.Cipher.DES3.MODE_CFB,iv)
-            toserver_pkt = ''.join(myDes.encrypt(toserver_pkt))
+            import Crypto.Cipher.DES3 as cipher
+            toserver_pkt = self._apply_cipher(cipher, iv, password, toserver_pkt)
             #print "toserver_pkt: "+toserver_pkt
         elif mode == 8:
-            import Crypto.Cipher.Blowfish
-            import Crypto.Util.randpool
-
-            max_key_size = Crypto.Cipher.Blowfish.key_size[-1]
-            password = (password + ('\0' * max_key_size))[:max_key_size]
-            iv_size = 8
-            if len(iv) >= Crypto.Cipher.Blowfish.block_size:
-                iv = iv[:iv_size]
-            else:
-                iv += self.random_pool.get_bytes(iv_size - iv)
-            e = Crypto.Cipher.Blowfish.new(
-                password, Crypto.Cipher.Blowfish.MODE_CFB, iv)
-            toserver_pkt = ''.join(e.encrypt(toserver_pkt))
+            import Crypto.Cipher.Blowfish as cipher
+            toserver_pkt = self._apply_cipher(cipher, iv, password, toserver_pkt)
             #print "toserver_pkt: "+toserver_pkt
         elif mode == 0:
             return toserver_pkt
