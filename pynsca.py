@@ -62,11 +62,10 @@ class NSCANotifier(object):
     def _pad_password(self, password, length):
         return password + ('\0' * (length - len(password)))
 
-    def _apply_cipher(self, cipher, iv, password, toserver_pkt):
+    def _apply_cipher(self, cipher, key_size, iv, password, toserver_pkt):
         import Crypto.Util.randpool
 
-        max_key_size = cipher.key_size[-1]
-        password = self._pad_password(password, max_key_size)
+        password = self._pad_password(password, key_size)
         iv_size = cipher.block_size
         if len(iv) >= iv_size:
             iv = iv[:iv_size]
@@ -76,6 +75,17 @@ class NSCANotifier(object):
         return ''.join(e.encrypt(toserver_pkt))
 
     def _encrypt_packet(self, toserver_pkt, iv, mode, password):
+        from Crypto.Cipher import DES, DES3, CAST, Blowfish
+        crypto_modes = {
+            2: (DES, 8),
+            3: (DES3, 24),
+            4: (CAST, 16),
+            8: (Blowfish, 56),
+        }
+        if mode in crypto_modes:
+            cipher, key_size = crypto_modes[mode]
+            return self._apply_cipher(cipher, key_size, iv, password, toserver_pkt)
+
         if mode == 1:
             cycle = [iv]
             if password:
@@ -94,14 +104,6 @@ class NSCANotifier(object):
             key[0:len(password)] = password
             m.init(''.join(key), iv[:iv_size])
             toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
-        elif mode == 3:
-            import Crypto.Cipher.DES3 as cipher
-            toserver_pkt = self._apply_cipher(cipher, iv, password, toserver_pkt)
-            #print "toserver_pkt: "+toserver_pkt
-        elif mode == 8:
-            import Crypto.Cipher.Blowfish as cipher
-            toserver_pkt = self._apply_cipher(cipher, iv, password, toserver_pkt)
-            #print "toserver_pkt: "+toserver_pkt
         elif mode == 0:
             return toserver_pkt
         else:
