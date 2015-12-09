@@ -91,6 +91,21 @@ class NSCANotifier(object):
             myDes = Crypto.Cipher.DES3.new(password, Crypto.Cipher.DES3.MODE_CFB,iv)
             toserver_pkt = ''.join(myDes.encrypt(toserver_pkt))
             #print "toserver_pkt: "+toserver_pkt
+        elif mode == 8:
+            import Crypto.Cipher.Blowfish
+            import Crypto.Util.randpool
+
+            max_key_size = Crypto.Cipher.Blowfish.key_size[-1]
+            password = (password + ('\0' * max_key_size))[:max_key_size]
+            iv_size = 8
+            if len(iv) >= Crypto.Cipher.Blowfish.block_size:
+                iv = iv[:iv_size]
+            else:
+                iv += self.random_pool.get_bytes(iv_size - iv)
+            e = Crypto.Cipher.Blowfish.new(
+                password, Crypto.Cipher.Blowfish.MODE_CFB, iv)
+            toserver_pkt = ''.join(e.encrypt(toserver_pkt))
+            #print "toserver_pkt: "+toserver_pkt
         elif mode == 0:
             return toserver_pkt
         else:
