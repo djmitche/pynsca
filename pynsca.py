@@ -59,7 +59,33 @@ class NSCANotifier(object):
         iv, timestamp = struct.unpack(self.fromserver_fmt, bytes)
         return iv, timestamp
 
+    def _pad_password(self, password, length):
+        return password + ('\0' * (length - len(password)))
+
+    def _apply_cipher(self, cipher, key_size, iv, password, toserver_pkt):
+        import Crypto.Util.randpool
+
+        password = self._pad_password(password, key_size)
+        iv_size = cipher.block_size
+        if len(iv) >= iv_size:
+            iv = iv[:iv_size]
+        else:
+            iv += self.random_pool.get_bytes(iv_size - iv)
+        e = cipher.new(password, cipher.MODE_CFB, iv)
+        return ''.join(e.encrypt(toserver_pkt))
+
     def _encrypt_packet(self, toserver_pkt, iv, mode, password):
+        from Crypto.Cipher import DES, DES3, CAST, Blowfish
+        crypto_modes = {
+            2: (DES, 8),
+            3: (DES3, 24),
+            4: (CAST, 16),
+            8: (Blowfish, 56),
+        }
+        if mode in crypto_modes:
+            cipher, key_size = crypto_modes[mode]
+            return self._apply_cipher(cipher, key_size, iv, password, toserver_pkt)
+
         if mode == 1:
             cycle = [iv]
             if password:
@@ -78,19 +104,6 @@ class NSCANotifier(object):
             key[0:len(password)] = password
             m.init(''.join(key), iv[:iv_size])
             toserver_pkt = ''.join([m.encrypt(x) for x in toserver_pkt])
-        elif mode == 3:
-            import Crypto.Cipher.DES3
-            import Crypto.Util.randpool
-
-            password += '\0' * (24 - len(password))
-            iv_size = 8
-            if len(iv) >= Crypto.Cipher.DES3.block_size:
-                iv = iv[:iv_size]
-            else:
-                iv += self.random_pool.get_bytes(iv_size - iv)
-            myDes = Crypto.Cipher.DES3.new(password, Crypto.Cipher.DES3.MODE_CFB,iv)
-            toserver_pkt = ''.join(myDes.encrypt(toserver_pkt))
-            #print "toserver_pkt: "+toserver_pkt
         elif mode == 0:
             return toserver_pkt
         else:
