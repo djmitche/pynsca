@@ -107,7 +107,7 @@ class NSCANotifier(object):
         elif mode == 0:
             return toserver_pkt
         else:
-            print "no supported encryption_mode"
+            print("no supported encryption_mode")
         return toserver_pkt
 
     def _encode_to_server(self, iv, timestamp, return_code, host_name,
